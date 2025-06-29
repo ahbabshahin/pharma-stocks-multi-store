@@ -1,55 +1,52 @@
-import React from 'react';
-import { useQuery, gql } from '@apollo/client';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './store';
-import { increment, decrement } from './store/counterSlice';
-import { Button } from 'antd';
-import './index.css';
 
-const GET_EXAMPLE = gql`
-  query GetExample {
-    Pokemon {
-      id
-    }
-  }
-`;
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Dashboard from "./pages/Dashboard";
+import Inventory from "./pages/Inventory";
+import CreateProduct from "./pages/CreateProduct";
+import Customers from "./pages/Customers";
+import CreateCustomer from "./pages/CreateCustomer";
+import Sales from "./pages/Sales";
+import Invoices from "./pages/Invoices";
+import CreateInvoice from "./pages/CreateInvoice";
+import Users from "./pages/Users";
+import User from "./pages/User";
+import CreateUser from "./pages/CreateUser";
+import CreateBusiness from "./pages/CreateBusiness";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
 
-function App() {
-	const { data, loading, error } = useQuery(GET_EXAMPLE);
-	const count = useSelector((state: RootState) => state.counter.value);
-	const dispatch = useDispatch();
+const queryClient = new QueryClient();
 
-	return (
-		<div className='bg-blue-500 text-black p-4'>
-			<h1 className='text-2xl'>Hello, Tailwind CSS!</h1>
-			<Button type='primary'>Ant Design Button</Button>
-			<button className='btn btn-success mt-2'>Bootstrap Button</button>
-			<div>
-				{loading ? (
-					<p>Loading...</p>
-				) : error ? (
-					<p>Error: {error.message}</p>
-				) : (
-					<p>GraphQL Data: {JSON.stringify(data)}</p>
-				)}
-			</div>
-			<div className='mt-4'>
-				<p>Counter: {count}</p>
-				<button
-					className='btn btn-primary mr-2'
-					onClick={() => dispatch(increment())}
-				>
-					Increment
-				</button>
-				<button
-					className='btn btn-secondary'
-					onClick={() => dispatch(decrement())}
-				>
-					Decrement
-				</button>
-			</div>
-		</div>
-	);
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Layout><Dashboard /></Layout>} />
+          <Route path="/inventory" element={<Layout><Inventory /></Layout>} />
+          <Route path="/inventory/create" element={<Layout><CreateProduct /></Layout>} />
+          <Route path="/customers" element={<Layout><Customers /></Layout>} />
+          <Route path="/customers/create" element={<Layout><CreateCustomer /></Layout>} />
+          <Route path="/sales" element={<Layout><Sales /></Layout>} />
+          <Route path="/invoices" element={<Layout><Invoices /></Layout>} />
+          <Route path="/invoices/create" element={<Layout><CreateInvoice /></Layout>} />
+          <Route path="/users" element={<Layout><Users /></Layout>} />
+          <Route path="/users/create" element={<Layout><CreateUser /></Layout>} />
+          <Route path="/users/:userId" element={<Layout><User /></Layout>} />
+          <Route path="/business/create" element={<Layout><CreateBusiness /></Layout>} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
