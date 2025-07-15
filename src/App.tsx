@@ -24,11 +24,13 @@ import { useState } from "react";
 
 const App = () => {
   // <QueryClientProvider client={queryClient}>
-    const [user, setUser] = useState(null); // Replace with actual authentication logic
 
-	const handleLogin = () => {
-		setUser({ username: 'testuser' }); // Simulate successful login
-	};
+    const [user, setUser] = useState(null); 	// Replace with actual authentication logic
+		const token = localStorage.getItem('token');
+		if(token && user === null){
+			setUser(token)
+		}
+	console.log('token ', token);
   return (
 		<TooltipProvider>
 			<Toaster />

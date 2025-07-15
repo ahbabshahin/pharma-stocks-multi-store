@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, from } from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, from, operationName } from '@apollo/client';
 
 const httpLink = new HttpLink({
 	uri: 'http://localhost:5000/graphql', // Replace with your GraphQL API
@@ -9,6 +9,7 @@ const authLink = new ApolloLink((operation, forward) => {
   operation.setContext({
     headers: {
       Authorization: token ? `Bearer ${token}` : '',
+      operationName: 'login'
     },
   });
   console.log('GraphQL Request:', operation);
