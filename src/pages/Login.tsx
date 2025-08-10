@@ -15,13 +15,12 @@ import {
 import { useMutation } from '@apollo/client';
 import { LOGIN } from '@/apollo/mutations';
 import { useNavigate } from 'react-router-dom';
-const Login: React.FC = () => {
+
+const Login: React.FC<{ setUser: (token: string) => void }> = ({ setUser }) => {
 	const [showPassword, setShowPassword] = useState(false);
-	const [formData, setFormData] = useState({
-		username: '',
-		password: '',
-		// rememberMe: false
-	});
+	const [formData, setFormData] = useState({ username: '', password: '' });
+	const navigate = useNavigate();
+	const [login] = useMutation(LOGIN);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, type, checked, value } = e.target;
@@ -30,20 +29,20 @@ const Login: React.FC = () => {
 			[name]: type === 'checkbox' ? checked : value,
 		}));
 	};
-  const navigate = useNavigate();
-	const [login, {data}] = useMutation(LOGIN);
 
-	const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('Login attempt:', formData);
-		login({ variables: { payload: formData } });
-		// TODO: Implement actual login logic
-    if(data?.login){
-		console.log('data :', data.login);
-    localStorage.setItem('token', JSON.stringify(data?.login?.token));
-    navigate('/invoices', { replace: true });
-    }
-	};
+		try {
+			const res = await login({ variables: { payload: formData } });
+			if (res.data?.login?.token) {
+				localStorage.setItem('token', res.data.login.token);
+				setUser(res.data.login.token); // ✅ updates App state
+				navigate('/invoices');
+			}
+		} catch (err) {
+			console.error('Login failed:', err);
+		}
+  };
 
 	return (
 		<div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>

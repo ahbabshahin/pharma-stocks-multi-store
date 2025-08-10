@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   Package, 
@@ -43,13 +43,18 @@ const navigation = [
 function AppSidebar() {
   const location = useLocation();
   const { state } = useSidebar();
-
+  const navigate = useNavigate();
   const isActive = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
     }
     return location.pathname.startsWith(path);
   };
+
+  const handleLogout = () =>{
+    localStorage.removeItem('token');
+    navigate('/')
+  }
 
   return (
     <Sidebar className="bg-white shadow-lg">
@@ -118,7 +123,7 @@ function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <button className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 w-full">
+              <button onClick={handleLogout} className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 w-full">
                 <LogOut className="w-5 h-5" />
                 {state === 'expanded' && <span>Logout</span>}
               </button>

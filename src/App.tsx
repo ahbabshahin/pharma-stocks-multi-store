@@ -18,19 +18,21 @@ import CreateUser from "./pages/CreateUser";
 import CreateBusiness from "./pages/CreateBusiness";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // const queryClient = new QueryClient();
 
 const App = () => {
   // <QueryClientProvider client={queryClient}>
+  const [user, setUser] = useState<string | null>(null);
 
-    const [user, setUser] = useState(null); 	// Replace with actual authentication logic
+  useEffect(() => {
 		const token = localStorage.getItem('token');
-		if(token && user === null){
-			setUser(token)
+		if (token) {
+			setUser(token);
 		}
-	console.log('token ', token);
+		console.log('token ', token);
+  }, []);
   return (
 		<TooltipProvider>
 			<Toaster />
@@ -38,8 +40,16 @@ const App = () => {
 			<BrowserRouter>
 				<Routes>
 					{/* <Navigate replace={user ?}/> */}
-					<Route path='/' element={user ? <Outlet /> : <Login />}>
-						<Route path='/login' element={<Login />} />
+					<Route
+						path='/'
+						element={
+							user ? <Outlet /> : <Login setUser={setUser} />
+						}
+					>
+						<Route
+							path='/login'
+							element={<Login setUser={setUser} />}
+						/>
 						<Route
 							path='/'
 							element={
